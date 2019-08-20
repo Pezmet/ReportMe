@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+        <id>TGST.ReportMe</id>
+        <version>0.0.0</version>
+        <title>TGST.ReportMe</title>
+        <authors>Alian-Diana Milasan</authors>
+        <owners>Ubisoft TGST</owners>
+        <projectUrl>https://gitlab-ncsa.ubisoft.org/TGST/ReportMe</projectUrl>
+        <iconUrl>https://gitlab-ncsa.ubisoft.org/TGST/ReportMe/blob/master/ReportMe/Team_logo.ico</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Awesome app to generate testrail/jira based report</description>
+        <tags></tags>
+    </metadata>
+    <files>
+        <file src="ReportMe\bin\Release\**" target="tools" />
+    </files>
+</package>

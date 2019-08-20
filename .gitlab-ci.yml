@@ -1,0 +1,98 @@
+stages:
+  - build
+  # - test
+  - publish
+  - generate_facade
+
+build:debug:
+  stage: build
+  script:
+    - TeaBox.com Build -configuration="Debug|Any CPU"
+  artifacts:  # this part allows you to transfer your build artifacts to the next stages
+    untracked: true
+    name: TGST.ReportMe_Build_%CI_COMMIT_SHA%
+    expire_in: 2d
+    paths:
+      - bin/
+
+build:staging:
+  stage: build
+  script:
+    # copy the Staging config over the release
+    - TeaBox.com Build
+  artifacts:  # this part allows you to transfer your build artifacts to the next stages
+    untracked: true
+    name: TGST.ReportMe_Build_%CI_COMMIT_SHA%
+    expire_in: 2d
+    paths:
+      - bin/
+  except:
+      - /^v[0-9]*.[0-9]*.[0-9]*$/ # run for pre-release versions like v0.0.1-alpha, v0.0.1-beta2, v0.0.2-rc4
+
+build:prod:
+  stage: build
+  script:
+    - TeaBox.com Build
+  artifacts:  # this part allows you to transfer your build artifacts to the next stages
+    untracked: true
+    name: TGST.ReportMe_Build_%CI_COMMIT_SHA%
+    expire_in: 2d
+    paths:
+      - bin/
+  only:
+    - /^v[0-9]*.[0-9]*.[0-9]*$/ # run for offical versions like v0.0.1, v1.0.0
+
+# Deactivating testing stuff for now
+# test:debug:
+#   stage: test
+#   script:
+#     - TeaBox.com RunTests -configuration="Debug|Any CPU"
+#   dependencies:
+#     - build:debug
+
+# analyse_code:
+#   stage: test
+#   script:
+#     - TeaBox.com AnalyseCode -configuration="Debug|Any CPU"
+#   dependencies:
+#     - build:debug
+
+publish:
+  stage: publish
+  script:
+    - TeaBox.com PublishNugetPackage -NuspecFile="ReportMe.nuspec"
+  only:
+    - tags
+    - master@gitlab-ncsa.ubisoft.org/%CI_PROJECT_PATH%
+
+generate_facade:staging:
+  stage: generate_facade
+  script:
+    - TeaBox.com GenerateFacades -NuspecFile="ReportMe.nuspec" -outputFolder="Facade" -packageVersion="pre" -packageSource="https://artifactory/api/nuget/nuget/" -runMode="Embedded" -displayUpdateWindow="true" -housekeep="true"
+  artifacts:
+    name: TGST.ReportMe_%CI_BUILD_TAG%
+    paths:
+      - Facade/*.exe
+      - Facade/*.config
+  only:
+    - tags
+    - master@gitlab-ncsa.ubisoft.org/%CI_PROJECT_PATH%
+  except:
+      - /^v[0-9]*.[0-9]*.[0-9]*$/ # run for pre-release versions like v0.0.1-alpha, v0.0.1-beta2, v0.0.2-rc4
+  dependencies:
+    - build:staging
+
+generate_facade:prod:
+  stage: generate_facade
+  script:
+    - TeaBox.com GenerateFacades -NuspecFile="ReportMe.nuspec" -outputFolder="Facade" -packageVersion="latest" -packageSource="https://artifactory/api/nuget/nuget/" -runMode="Embedded" -displayUpdateWindow="true" -housekeep="true"
+  artifacts:
+    name: TGST.ReportMe_%CI_BUILD_TAG%
+    paths:
+      - Facade/*.exe
+      - Facade/*.config
+  only:
+    - /^v[0-9]*.[0-9]*.[0-9]*$/ # run for offical versions like v0.0.1, v1.0.0
+    - master@gitlab-ncsa.ubisoft.org/%CI_PROJECT_PATH%
+  dependencies:
+    - build:prod
