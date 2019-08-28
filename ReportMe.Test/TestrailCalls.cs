@@ -15,8 +15,8 @@ namespace ReportMe.Test
         [Test]
         public void TestrailNotEmty()
         {
-            string user = "svc_reportme.tg@ubisoft.com";
-            string pass = "k2LsZ2yx9mM70rakhN5d-ZAypBRGpbQ1VAsh4w4Gq";
+            string user = "";
+            string pass = "";
             var sut = new Get();
             Assert.That(sut.Trequest("get_project/", "44", user, pass) != null);
            
@@ -24,8 +24,8 @@ namespace ReportMe.Test
         [Test]
         public void TestRailResponseType()
         {
-            string user = "svc_reportme.tg@ubisoft.com";
-            string pass = "k2LsZ2yx9mM70rakhN5d-ZAypBRGpbQ1VAsh4w4Gq";
+            string user = "";
+            string pass = "";
             var sut = new Get();
             Assert.That(sut.Trequest("get_project/", "44", user, pass).GetType() == typeof(JObject));
         }
@@ -33,8 +33,8 @@ namespace ReportMe.Test
         public void TestrailResponseUsername()
         {
             //incomplete username or typo
-            string user = "svc_reportme.tg@u";
-            string pass = "k2LsZ2yx9mM70rakhN5d-ZAypBRGpbQ1VAsh4w4Gq";
+            string user = "";
+            string pass = "";
             var sut = new Get();
             Assert.That(sut.Trequest("get_project/", "44", user, pass) == null);
             user = "!@#@$%$%$^&^*&(";
@@ -44,8 +44,8 @@ namespace ReportMe.Test
         [Test]
         public void TestRailResponsePassword()
         {
-            string user = "svc_reportme.tg@ubisoft.com";
-            string pass = "Us3XyuWbEYN/Djv9";
+            string user = "";
+            string pass = "";
             var sut = new Get();
             Assert.That(sut.Trequest("get_project/", "44", user, pass) == null);
         }
